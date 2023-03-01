@@ -49,7 +49,7 @@ export const removeDollars = (amounts: string[]): number[] => {
             str.charAt(0) === "$"
                 ? isNaN(parseInt(str.slice(1)))
                     ? 0
-                    : parseInt(str)
+                    : parseInt(str.slice(1))
                 : isNaN(parseInt(str)) // eslint-disable-next-line prettier/prettier, indent
                 ? 0 // eslint-disable-next-line prettier/prettier, indent
                 : parseInt(str) // eslint-disable-next-line prettier/prettier
@@ -64,7 +64,7 @@ export const removeDollars = (amounts: string[]): number[] => {
  */
 export const shoutIfExclaiming = (messages: string[]): string[] => {
     const noQs = messages.filter(
-        (str: string): boolean => str.charAt(str.length - 1) === "?"
+        (str: string): boolean => str.charAt(str.length - 1) !== "?"
     );
     const shout = noQs.map((str: string): string =>
         str.charAt(str.length - 1) === "!" ? str.toUpperCase() : str
@@ -77,7 +77,7 @@ export const shoutIfExclaiming = (messages: string[]): string[] => {
  * 4 letters long.
  */
 export function countShortWords(words: string[]): number {
-    const short = words.filter((str: string): boolean => str.length < 3);
+    const short = words.filter((str: string): boolean => str.length < 4);
     return short.length;
 }
 
@@ -112,6 +112,9 @@ export function makeMath(addends: number[]): string {
     const strAddends = addends.map((num1: number): string => num1.toString());
     const right = strAddends.join("+");
     const left = sum.concat("=");
+    if (right[0] === undefined) {
+        return left.concat("0");
+    }
     return left.concat(right);
 }
 
@@ -125,7 +128,7 @@ export function makeMath(addends: number[]): string {
  * And the array [1, 9, 7] would become [1, 9, 7, 17]
  */
 export function injectPositive(values: number[]): number[] {
-    const index = values.findIndex((num: number): boolean => num >= 0);
+    const index = values.findIndex((num: number): boolean => num <= 0);
     if (index !== -1) {
         const left = values.slice(0, index);
         const right = values.slice(index + 1);
