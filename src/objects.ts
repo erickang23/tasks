@@ -62,7 +62,7 @@ export function isValid(question: Question, answer: string): boolean {
  */
 export function toShortForm(question: Question): string {
     const id = question.id.toString();
-    const shortName = question.name.slice(0, 9);
+    const shortName = question.name.slice(0, 10);
     return id.concat(": ", shortName);
 }
 
@@ -123,7 +123,8 @@ export function duplicateQuestion(id: number, oldQuestion: Question): Question {
     const newQ = {
         ...oldQuestion,
         name: "Copy of ".concat(oldQuestion.name),
-        published: false
+        published: false,
+        id: id
     };
     return newQ;
 }
@@ -154,5 +155,11 @@ export function mergeQuestion(
     contentQuestion: Question,
     { points }: { points: number }
 ): Question {
-    return { ...contentQuestion, points: points };
+    return {
+        ...contentQuestion,
+        points: points,
+        name: name,
+        id: id,
+        published: false
+    };
 }
