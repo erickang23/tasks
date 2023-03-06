@@ -1,5 +1,7 @@
+import Q from "q";
 import { Answer } from "./interfaces/answer";
 import { Question, QuestionType } from "./interfaces/question";
+import { makeBlankQuestion } from "./objects";
 
 /**
  * Consumes an array of questions and returns a new array with only the questions
@@ -129,7 +131,10 @@ export function makeAnswers(questions: Question[]): Answer[] {
  * each question is now published, regardless of its previous published status.
  */
 export function publishAll(questions: Question[]): Question[] {
-    return [];
+    const pub = questions.map(
+        (q: Question): Question => ({ ...q, published: true })
+    );
+    return pub;
 }
 
 /***
@@ -137,7 +142,13 @@ export function publishAll(questions: Question[]): Question[] {
  * are the same type. They can be any type, as long as they are all the SAME type.
  */
 export function sameType(questions: Question[]): boolean {
-    return false;
+    const shortAns = questions.every(
+        (q: Question): boolean => q.type === "short_answer_question"
+    );
+    const multi = questions.every(
+        (q: Question): boolean => q.type === "multiple_choice_question"
+    );
+    return shortAns || multi;
 }
 
 /***
@@ -151,7 +162,9 @@ export function addNewQuestion(
     name: string,
     type: QuestionType
 ): Question[] {
-    return [];
+    const q = makeBlankQuestion(id, name, type);
+    const qWithNew = [...questions, q];
+    return qWithNew;
 }
 
 /***
@@ -164,7 +177,15 @@ export function renameQuestionById(
     targetId: number,
     newName: string
 ): Question[] {
-    return [];
+    /*
+    const ind = questions.findIndex(
+        (q: Question): boolean => q.id === targetId
+    );*/
+    const renamed = questions.map(
+        (q: Question): Question =>
+            q.id === targetId ? { ...q, name: newName } : q
+    );
+    return renamed;
 }
 
 /***
@@ -179,7 +200,15 @@ export function changeQuestionTypeById(
     targetId: number,
     newQuestionType: QuestionType
 ): Question[] {
-    return [];
+    const newType = questions.map(
+        (q: Question): Question =>
+            q.id === targetId
+                ? newQuestionType !== "multiple_choice_question"
+                    ? { ...q, type: newQuestionType, options: [] }
+                    : { ...q, type: newQuestionType }
+                : q
+    );
+    return newType;
 }
 
 /**
@@ -192,12 +221,39 @@ export function changeQuestionTypeById(
  * Remember, if a function starts getting too complicated, think about how a helper function
  * can make it simpler! Break down complicated tasks into little pieces.
  */
+export function makeDeepCopyQs(questions: Question[]): Question[] {
+    const deepCopy = questions.map(
+        (q: Question): Question => ({ ...q, options: [...q.options] })
+    );
+    return deepCopy;
+}
+
 export function editOption(
     questions: Question[],
     targetId: number,
     targetOptionIndex: number,
     newOption: string
 ): Question[] {
+    const deepCopy = makeDeepCopyQs(questions);
+    const newOpt = deepCopy.map(
+        (q: Question): Question =>
+            q.id === targetId
+                ? targetOptionIndex === -1
+                    ? { ...q, options: [...q.options, newOption] } // eslint-disable-next-line indent, prettier/prettier
+                    : {
+                          // eslint-disable-next-line indent, prettier/prettier
+                          // eslint-disable-next-line indent, prettier/prettier
+                          ...q, // eslint-disable-next-line indent, prettier/prettier
+                          options: q.options.splice(
+                              // eslint-disable-next-line indent, prettier/prettier
+                              // eslint-disable-next-line indent, prettier/prettier
+                              targetOptionIndex, // eslint-disable-next-line indent, prettier/prettier
+                              1, // eslint-disable-next-line indent, prettier/prettier
+                              newOption // eslint-disable-next-line indent, prettier/prettier
+                          ) // eslint-disable-next-line indent
+                      }
+                : q
+    );
     return [];
 }
 
