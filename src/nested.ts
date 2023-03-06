@@ -1,7 +1,7 @@
-import Q from "q";
+/* eslint-disable indent */
 import { Answer } from "./interfaces/answer";
 import { Question, QuestionType } from "./interfaces/question";
-import { makeBlankQuestion } from "./objects";
+import { makeBlankQuestion, duplicateQuestion } from "./objects";
 
 /**
  * Consumes an array of questions and returns a new array with only the questions
@@ -254,7 +254,7 @@ export function editOption(
                       }
                 : q
     );
-    return [];
+    return newOpt;
 }
 
 /***
@@ -268,5 +268,10 @@ export function duplicateQuestionInArray(
     targetId: number,
     newId: number
 ): Question[] {
-    return [];
+    const ind = questions.findIndex(
+        (q: Question): boolean => q.id === targetId
+    );
+    const newQ = duplicateQuestion(newId, questions[ind]);
+    const dupQ = questions.splice(ind + 1, 0, newQ);
+    return dupQ;
 }
