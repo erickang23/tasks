@@ -20,7 +20,7 @@ export function getPublishedQuestions(questions: Question[]): Question[] {
 export function getNonEmptyQuestions(questions: Question[]): Question[] {
     const nonEmptQs = questions.filter(
         (Q: Question): boolean =>
-            Q.body === "" && Q.expected === "" && Q.options.length === 0
+            Q.body !== "" && Q.expected !== "" && Q.options.length !== 0
     );
     return nonEmptQs;
 }
@@ -36,7 +36,7 @@ export function findQuestion(
     //const qIDs = questions.map((q: Question): number => q.id);
     //const ind = qIDs.findIndex((id1: number): boolean => id1 === id);
     const index = questions.findIndex((q: Question): boolean => q.id === id);
-    if (index !== undefined) {
+    if (index !== -1) {
         return questions[index];
     } else {
         return null;
@@ -235,22 +235,25 @@ export function editOption(
     newOption: string
 ): Question[] {
     const deepCopy = makeDeepCopyQs(questions);
+    /*
+    const ind = deepCopy.findIndex((q: Question): boolean => q.id === targetId);
+    if (targetOptionIndex !== -1) {
+        deepCopy[ind].options.splice(targetOptionIndex, 1, newOption);
+    } else {
+        deepCopy[ind].options.splice()
+    }
+    */
     const newOpt = deepCopy.map(
         (q: Question): Question =>
             q.id === targetId
                 ? targetOptionIndex === -1
                     ? { ...q, options: [...q.options, newOption] } // eslint-disable-next-line indent, prettier/prettier
                     : {
-                          // eslint-disable-next-line indent, prettier/prettier
-                          // eslint-disable-next-line indent, prettier/prettier
                           ...q, // eslint-disable-next-line indent, prettier/prettier
-                          options: q.options.splice(
-                              // eslint-disable-next-line indent, prettier/prettier
-                              // eslint-disable-next-line indent, prettier/prettier
-                              targetOptionIndex, // eslint-disable-next-line indent, prettier/prettier
-                              1, // eslint-disable-next-line indent, prettier/prettier
-                              newOption // eslint-disable-next-line indent, prettier/prettier
-                          ) // eslint-disable-next-line indent
+                          options: q.options
+                              .slice(0, targetOptionIndex)
+                              .concat(newOption)
+                              .concat(q.options.slice(targetOptionIndex + 1))
                       }
                 : q
     );
@@ -272,6 +275,9 @@ export function duplicateQuestionInArray(
         (q: Question): boolean => q.id === targetId
     );
     const newQ = duplicateQuestion(newId, questions[ind]);
-    const dupQ = questions.splice(ind + 1, 0, newQ);
+    const dupQ = questions
+        .slice(0, ind + 1)
+        .concat(newQ)
+        .concat(questions.slice(ind + 1, questions.length - 1));
     return dupQ;
 }
