@@ -20,7 +20,7 @@ export function getPublishedQuestions(questions: Question[]): Question[] {
 export function getNonEmptyQuestions(questions: Question[]): Question[] {
     const nonEmptQs = questions.filter(
         (Q: Question): boolean =>
-            Q.body !== "" && Q.expected !== "" && Q.options.length !== 0
+            Q.body !== "" || Q.expected !== "" || Q.options.length !== 0
     );
     return nonEmptQs;
 }
@@ -278,6 +278,6 @@ export function duplicateQuestionInArray(
     const dupQ = questions
         .slice(0, ind + 1)
         .concat(newQ)
-        .concat(questions.slice(ind + 1, questions.length - 1));
+        .concat(questions.slice(ind + 1, questions.length));
     return dupQ;
 }
