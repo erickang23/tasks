@@ -1,9 +1,10 @@
+/* eslint-disable indent */
 import React, { useState } from "react";
 import { Form, Button } from "react-bootstrap";
 
 export function GiveAttempts(): JSX.Element {
     const [attemptsLeft, setAttemptsLeft] = useState<number>(3);
-    const [requestAttempts, setRequestAttempts] = useState<number>(0);
+    const [requestAttempts, setRequestAttempts] = useState<string>("");
 
     return (
         <div>
@@ -16,23 +17,30 @@ export function GiveAttempts(): JSX.Element {
                         value={requestAttempts}
                         onChange={(
                             event: React.ChangeEvent<HTMLInputElement>
-                        ) =>
-                            setRequestAttempts(
-                                parseInt(event.target.value) || attemptsLeft
-                            )
-                        }
+                        ) => setRequestAttempts(event.target.value)}
                     />
                 </Form.Group>
             </div>
             <div>
                 <Button
                     onClick={() =>
-                        setAttemptsLeft(attemptsLeft + requestAttempts)
+                        parseInt(requestAttempts) > 0
+                            ? setAttemptsLeft(
+                                  attemptsLeft + parseInt(requestAttempts)
+                              )
+                            : setAttemptsLeft(attemptsLeft)
                     }
                 >
                     Gain
                 </Button>
-                <Button onClick={() => setAttemptsLeft(attemptsLeft - 1)}>
+                <Button
+                    disabled={!(attemptsLeft > 0)}
+                    onClick={() =>
+                        attemptsLeft > 0
+                            ? setAttemptsLeft(attemptsLeft - 1)
+                            : setAttemptsLeft(attemptsLeft)
+                    }
+                >
                     Use
                 </Button>
             </div>

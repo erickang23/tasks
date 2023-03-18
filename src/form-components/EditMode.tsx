@@ -11,6 +11,7 @@ export function EditMode(): JSX.Element {
             <div>
                 <h3>Edit Mode</h3>
                 <Form.Check
+                    inline
                     type="switch"
                     id="is-edit-check"
                     label="Toggle Edit Mode"
@@ -25,6 +26,7 @@ export function EditMode(): JSX.Element {
                     <Form.Label>Name:</Form.Label>
                     <Form.Control
                         value={name}
+                        hidden={!isInEdit}
                         onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                             setName(e.target.value)
                         }
@@ -33,9 +35,11 @@ export function EditMode(): JSX.Element {
             </div>
             <div>
                 <Form.Check
+                    inline
                     type="checkbox"
                     id="is-student-check"
                     label="Toggle Student Status"
+                    hidden={!isInEdit}
                     checked={isStudent}
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                         setIsStudent(e.target.checked)
@@ -43,7 +47,9 @@ export function EditMode(): JSX.Element {
                 />
             </div>
             <div>
-                {name} {isStudent ? "is" : "is not"} a student
+                {isInEdit
+                    ? ""
+                    : name + (isStudent ? " is" : " is not") + " a student."}
             </div>
         </div>
     );
