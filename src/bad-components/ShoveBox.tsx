@@ -1,26 +1,35 @@
 import React, { useState } from "react";
 import { Button } from "react-bootstrap";
+//import { NumberLiteralType } from "typescript";
 
-function ShoveBoxButton({
-    position,
-    setPosition
-}: {
+interface box {
     position: number;
-    setPosition: (newPosition: number) => void;
-}) {
+    setPosition: (newPos: number) => void;
+}
+
+function ShoveBoxButton({ position, setPosition }: box) {
     return (
-        <Button onClick={() => setPosition(4 + position)}>Shove the Box</Button>
+        <div>
+            (
+            <Button
+                onClick={() => {
+                    setPosition(4 + position);
+                }}
+            >
+                Shove the Box
+            </Button>
+            )
+        </div>
     );
 }
 
-function MoveableBox(): JSX.Element {
-    const [position, setPosition] = useState<number>(10);
+function MoveableBox({ position }: box): JSX.Element {
     return (
         <div
             data-testid="moveable-box"
             style={{
-                width: "50px",
-                height: "50px",
+                width: "${position}px",
+                height: "${position}px",
                 backgroundColor: "lightblue",
                 border: "1px solid blue",
                 display: "inline-block",
@@ -32,19 +41,22 @@ function MoveableBox(): JSX.Element {
 }
 
 export function ShoveBox(): JSX.Element {
-    const box = MoveableBox();
+    const [position, setPosition] = useState<number>(10);
 
     return (
         <div>
             <h3>Shove Box</h3>
-            {/* <span>The box is at: {box.position}</span>
+            <span>The box is at: {position}</span>
             <div>
                 <ShoveBoxButton
-                    position={box.position}
-                    setPosition={box.setPosition}
+                    position={position}
+                    setPosition={setPosition}
                 ></ShoveBoxButton>
-                {box}
-            </div> */}
+                <MoveableBox
+                    position={position}
+                    setPosition={setPosition}
+                ></MoveableBox>
+            </div>
         </div>
     );
 }
